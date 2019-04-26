@@ -34,7 +34,7 @@ export default class CameraComp extends Component {
 							<CameraIcon name = { 'zoom-in' } size = { 32 } />
 						</TouchableOpacity>
 
-						<Text style = { styles.ZoomText }>
+						<Text style = { styles.zoomText }>
 							{ zoom * 100 }%
 						</Text>
 
@@ -137,8 +137,9 @@ styles = {
 		justifyContent: 'center',
 	},
 	transparent: { backgroundColor: 'transparent' },
-	ZoomText: {
+	zoomText: {
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		borderRadius: 5,
 		fontSize: 18,
 		color: 'white',
 		textAlign: 'center',
