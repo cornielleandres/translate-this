@@ -1,7 +1,17 @@
-import React, { Component }												from 'react';
-import { Platform, StatusBar, StyleSheet, View }	from 'react-native';
-import { AppLoading, Asset, Font, Icon }					from 'expo';
-import AppNavigator																from './navigation/AppNavigator';
+import React, { Component }	from 'react';
+import {
+	Platform,
+	StatusBar,
+	StyleSheet,
+	View,
+}							from 'react-native';
+import {
+	AppLoading,
+	Font,
+	Icon,
+}							from 'expo';
+
+import { HomeScreen } from './screens/index.js';
 
 export default class App extends Component {
 	state = { isLoadingComplete: false };
@@ -19,7 +29,7 @@ export default class App extends Component {
 			return (
 				<View style = { styles.container }>
 					{ Platform.OS === 'ios' && <StatusBar barStyle = 'default' /> }
-					<AppNavigator />
+					<HomeScreen />
 				</View>
 			);
 		}
@@ -27,13 +37,9 @@ export default class App extends Component {
 
 	_loadResourcesAsync = async () => {
 		return Promise.all([
-			// Asset.loadAsync([
-			// 	require('./assets/images/robot-dev.png'),
-			// 	require('./assets/images/robot-prod.png'),
-			// ]),
 			Font.loadAsync({
-				...Icon.Ionicons.font, // font for tab bar
-				'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'), // font for HomeScreen.js
+				...Icon.MaterialIcons.font,
+				'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
 			}),
 		]);
 	};

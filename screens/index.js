@@ -1,9 +1,3 @@
-import HomeScreen		from './HomeScreen.js';
-import LinksScreen		from './LinksScreen.js';
-import SettingsScreen	from './SettingsScreen.js';
+import HomeScreen	from './HomeScreen.js';
 
-export {
-	HomeScreen,
-	LinksScreen,
-	SettingsScreen,
-};
+export { HomeScreen };
