@@ -1,141 +1,199 @@
 import React, { Component }	from 'react';
+import Clarifai				from 'clarifai';
+import { CLARIFAI_APP_KEY }	from 'react-native-dotenv';
 import {
-	Image,
-	ScrollView,
 	StyleSheet,
 	Text,
-	TouchableHighlight,
-	TouchableOpacity,
 	View,
 }							from 'react-native';
 import {
 	FileSystem,
 	Permissions,
 }							from 'expo';
+
 import {
 	CameraComp,
+	LanguagePicker,
 	MonoText,
+	Translate,
 }							from '../components/index.js';
 
 export default class HomeScreen extends Component {
 	state = {
+		concepts: [],
+		// concepts: [
+		// 	{ name: 'one', value: .99 },
+		// 	{ name: 'two', value: .9766 },
+		// 	{ name: 'three', value: .9766 },
+		// 	{ name: 'house', value: .9766 },
+		// 	{ name: 'dog', value: .9766 },
+		// 	{ name: 'cat', value: .9766 },
+		// 	{ name: 'pair', value: .9766 },
+		// 	{ name: 'dice', value: .9766 },
+		// ],
+
+
+
+
+
+
+
+
+
+
 		hasCameraPermission: null,
-		images: [],
+		image: null,
+		// image: 'https://cdn.pixabay.com/photo/2017/02/17/23/15/duiker-island-2076042__340.jpg',
+
+
+
+
+
+		language: 'fr',
+
+
+
+
+
+		showTranslate: false,
 	};
 
+	clarifaiApp = null;
 	cameraRef = null;
-	_setCameraRef = ref => this.cameraRef = ref;
 	cameraDirectory = FileSystem.cacheDirectory + 'Camera';
 
 	render() {
-		const { hasCameraPermission, images } = this.state;
+		const { concepts, hasCameraPermission, image, language, showTranslate } = this.state;
 		if (hasCameraPermission === null) {
-			return <Text>You need to give camera permissions in order to use this app</Text>;
+			return(
+				<View style = { styles.homeScreenContainer }>
+					<Text>You need to give camera permissions in order to use this app.</Text>
+				</View>
+			);
 		} else if (hasCameraPermission === false) {
-			return <Text>No access to camera</Text>;
+			return(
+				<View style = { styles.homeScreenContainer }>
+					<Text>No access to camera</Text>
+				</View>
+			);
 		} else {
 			return(
-				<View style = { styles.container }>
-					<ScrollView
-						style = { styles.container }
-						contentContainerStyle = { styles.contentContainer }
-					>
-						<View style = { styles.headerContainer }>
-							<MonoText style = { styles.headerText }>Translate This!</MonoText>
-						</View>
+				<View style = { styles.homeScreenContainer }>
+					<View style = { styles.header }>
+						<MonoText style = { styles.headerText }>Translate This!</MonoText>
+						<LanguagePicker
+							language = { language }
+							handleChangeLanguage = { this._handleChangeLanguage }
+						/>
+					</View>
 
-						<CameraComp _setCameraRef = { this._setCameraRef } />
+					<CameraComp setCameraRef = { this._setCameraRef } snap = { this._snap } />
 
-						<TouchableOpacity
-							onPress = { this._snap }
-							style = { styles.helpLink }
-						>
-							<Text style = { styles.helpLinkText }>Snap</Text>
-						</TouchableOpacity>
-						<View style = { styles.mainImageContainer }>
-							{
-								images.map((image, i) =>
-									<TouchableHighlight
-										key = { i }
-										onPress = { () => this._handleDeleteImage(i) }
-									>
-										<Image
-											style = { styles.mainImage }
-											source = {{
-												uri: this.cameraDirectory + '/' + image,
-												width: 100,
-												height: 100,
-											}}
-										/>
-									</TouchableHighlight>
-								)
-							}
-						</View>
-					</ScrollView>
+					{
+						showTranslate &&
+						// !showTranslate &&
+
+
+
+
+
+
+
+
+
+
+
+
+						<Translate
+							bgImage = { this.cameraDirectory + '/' + image }
+							// bgImage = { image }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+							concepts = { concepts }
+							language = { language }
+							toggleTranslate = { this._toggleTranslate }
+						/>
+					}
 				</View>
 			);
 		};
 	};
 
-	async componentDidMount() {
+	componentDidMount = async () => {
 		const { status } = await Permissions.askAsync(Permissions.CAMERA);
-		const images = await FileSystem.readDirectoryAsync(this.cameraDirectory);
-		this.setState({ hasCameraPermission: status === 'granted', images });
+		this.clarifaiApp = new Clarifai.App({ apiKey: CLARIFAI_APP_KEY });
+		this._deleteAllImages();
+		this.setState({ hasCameraPermission: status === 'granted' });
 	};
+
+	_deleteAllImages = async () => {
+		const images = await FileSystem.readDirectoryAsync(this.cameraDirectory);
+		images.forEach(async image => await FileSystem.deleteAsync(this.cameraDirectory + '/' + image));
+	};
+
+	_deleteRecentImage = async () => {
+		await FileSystem.deleteAsync(this.cameraDirectory + '/' + this.state.image);
+		this.setState({ image: null });
+	};
+
+	_handleChangeLanguage = language => this.setState({ language });
+
+	_setCameraRef = ref => this.cameraRef = ref;
 
 	_snap = async () => {
 		if (this.cameraRef) {
-			const photo = await this.cameraRef.takePictureAsync();
-			const images = await FileSystem.readDirectoryAsync(this.cameraDirectory);
-			this.setState({ images });
+			const photo = await this.cameraRef.takePictureAsync({ base64: true });
+			return this.clarifaiApp.models.initModel({
+				id: Clarifai.GENERAL_MODEL, version: "aa7f35c01e0642fda5cf400f543e7c40"
+			})
+			.then(generalModel => generalModel.predict(photo.base64))
+			.then(async response => {
+				let concepts = response.outputs[0].data.concepts;
+				const images = await FileSystem.readDirectoryAsync(this.cameraDirectory);
+				concepts = concepts.map(concept => ({ name: concept.name, value: concept.value }));
+				return this.setState({ image: images[0], concepts }, () => this._toggleTranslate());
+			});
 		}
 	};
 
-	_handleDeleteImage = async i => {
-		await FileSystem.deleteAsync(this.cameraDirectory + '/' + this.state.images[i]);
-		const images = await FileSystem.readDirectoryAsync(this.cameraDirectory);
-		this.setState({ images });
+	_toggleTranslate = () => {
+		const { showTranslate } = this.state;
+		if (showTranslate) this._deleteRecentImage();
+		this.setState({ showTranslate: !showTranslate });
 	};
 };
 
 const styles = StyleSheet.create({
-	container: {
+	homeScreenContainer: {
 		flex: 1,
 		backgroundColor: '#fff',
-	},
-	contentContainer: {
 		paddingTop: 30,
 	},
-	mainImageContainer: {
+	header: {
+		width: '100%',
+		flex: 1,
+		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: 10,
-		marginBottom: 20,
-	},
-	mainImage: {
-		width: 100,
-		height: 80,
-		resizeMode: 'contain',
-		marginTop: 3,
-	},
-	headerContainer: {
-		alignItems: 'center',
-		marginHorizontal: 50,
+		justifyContent: 'space-between',
+		paddingHorizontal: 10,
 	},
 	headerText: {
 		fontSize: 17,
-		color: 'rgba(96,100,109, 1)',
+		color: 'black',
 		lineHeight: 24,
 		textAlign: 'center',
-	},
-	helpContainer: {
-		marginTop: 15,
-		alignItems: 'center',
-	},
-	helpLink: {
-		paddingVertical: 15,
-	},
-	helpLinkText: {
-		fontSize: 14,
-		color: '#2e78b7',
 	},
 });
