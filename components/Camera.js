@@ -20,14 +20,14 @@ export default class CameraComp extends Component {
 		const { setCameraRef, snap } = this.props;
 		return(
 			<Camera
-				style = { styles.flex }
+				style = { [ styles.camera, styles.flex ] }
 				flashMode = { flashMode }
 				type = { type }
 				zoom = { zoom }
 				ref = { ref => setCameraRef(ref) }
 			>
 				<View
-					style = { [ styles.mainCameraView, styles.flex, styles.transparent ] }
+					style = { [ styles.cameraView, styles.flex, styles.transparent ] }
 				>
 					<View>
 						<TouchableOpacity style = { styles.icons } onPress = { this._zoomIn }>
@@ -121,7 +121,8 @@ styles = {
 		borderRadius: 5,
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 	},
-	mainCameraView: {
+	camera: { flexGrow: 15 },
+	cameraView: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 	},
