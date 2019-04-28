@@ -21,40 +21,9 @@ import {
 export default class HomeScreen extends Component {
 	state = {
 		concepts: [],
-		// concepts: [
-		// 	{ name: 'one', value: .99 },
-		// 	{ name: 'two', value: .9766 },
-		// 	{ name: 'three', value: .9766 },
-		// 	{ name: 'house', value: .9766 },
-		// 	{ name: 'dog', value: .9766 },
-		// 	{ name: 'cat', value: .9766 },
-		// 	{ name: 'pair', value: .9766 },
-		// 	{ name: 'dice', value: .9766 },
-		// ],
-
-
-
-
-
-
-
-
-
-
 		hasCameraPermission: null,
 		image: null,
-		// image: 'https://cdn.pixabay.com/photo/2017/02/17/23/15/duiker-island-2076042__340.jpg',
-
-
-
-
-
-		language: 'fr',
-
-
-
-
-
+		language: 'es',
 		showTranslate: false,
 	};
 
@@ -87,41 +56,12 @@ export default class HomeScreen extends Component {
 						/>
 					</View>
 
-					<CameraComp setCameraRef = { this._setCameraRef } snap = { this._snap } />
+					<CameraComp setCameraRef = { this._setCameraRef } snap = { this._snapPic } />
 
 					{
 						showTranslate &&
-						// !showTranslate &&
-
-
-
-
-
-
-
-
-
-
-
-
 						<Translate
 							bgImage = { this.cameraDirectory + '/' + image }
-							// bgImage = { image }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 							concepts = { concepts }
 							language = { language }
 							toggleTranslate = { this._toggleTranslate }
@@ -144,34 +84,29 @@ export default class HomeScreen extends Component {
 		images.forEach(async image => await FileSystem.deleteAsync(this.cameraDirectory + '/' + image));
 	};
 
-	_deleteRecentImage = async () => {
-		await FileSystem.deleteAsync(this.cameraDirectory + '/' + this.state.image);
-		this.setState({ image: null });
-	};
-
 	_handleChangeLanguage = language => this.setState({ language });
 
 	_setCameraRef = ref => this.cameraRef = ref;
 
-	_snap = async () => {
+	_snapPic = async () => {
 		if (this.cameraRef) {
 			const photo = await this.cameraRef.takePictureAsync({ base64: true });
-			return this.clarifaiApp.models.initModel({
+			this.clarifaiApp.models.initModel({
 				id: Clarifai.GENERAL_MODEL, version: "aa7f35c01e0642fda5cf400f543e7c40"
 			})
 			.then(generalModel => generalModel.predict(photo.base64))
 			.then(async response => {
 				let concepts = response.outputs[0].data.concepts;
 				const images = await FileSystem.readDirectoryAsync(this.cameraDirectory);
-				concepts = concepts.map(concept => ({ name: concept.name, value: concept.value }));
-				return this.setState({ image: images[0], concepts }, () => this._toggleTranslate());
+				concepts = concepts.map(concept => ({ name: concept.name }));
+				this.setState({ image: images[0], concepts }, () => this._toggleTranslate());
 			});
 		}
 	};
 
 	_toggleTranslate = () => {
 		const { showTranslate } = this.state;
-		if (showTranslate) this._deleteRecentImage();
+		if (showTranslate) this._deleteAllImages();
 		this.setState({ showTranslate: !showTranslate });
 	};
 };

@@ -6,15 +6,21 @@ import {
 	Text,
 }				from 'react-native';
 
-const Concept = ({ concept, speakWord }) => {
-	const { name, translation, value } = concept;
+const Concept = ({ concept, disableConcepts, speakWord }) => {
+	const { name, translation } = concept;
 	return(
-		<TouchableOpacity style = { styles.textContainer } onPress = { () => speakWord(translation) }>
-			<Text style = { styles.text }>
-				{ name }{' '}
-				<Text style = { styles.value }>{ (value * 100).toFixed(1) }%</Text>
-				-{' '}{ translation }
-			</Text>
+		<TouchableOpacity
+			style = { styles.textContainer }
+			onPress = { () => speakWord(translation) }
+			disabled = { disableConcepts }
+		>
+			<Text style = { styles.text }>{ name }</Text>
+			<Icon.MaterialIcons
+				name = { 'arrow-forward' }
+				size = { 18 }
+				color = { 'white' }
+			/>
+			<Text style = { styles.text }>{ translation }</Text>
 			<Icon.MaterialIcons
 				name = { 'hearing' }
 				size = { 18 }
@@ -30,6 +36,10 @@ const styles = StyleSheet.create({
 		color: 'white',
 	},
 	textContainer: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 		paddingTop: 10,
 		paddingRight: 10,
@@ -37,9 +47,6 @@ const styles = StyleSheet.create({
 		paddingLeft: 10,
 		marginBottom: 10,
 		width: '100%',
-	},
-	value: {
-		fontSize: 10,
 	},
 });
 
