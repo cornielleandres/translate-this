@@ -7,6 +7,7 @@ import {
 }							from 'react-native';
 import {
 	AppLoading,
+	Asset,
 	Font,
 	Icon,
 }							from 'expo';
@@ -37,6 +38,11 @@ export default class App extends Component {
 
 	_loadResourcesAsync = async () => {
 		return Promise.all([
+			Asset.loadAsync([
+				require('./assets/images/identifying_picture_loading.gif'),
+				require('./assets/images/taking_picture_loading.gif'),
+				require('./assets/images/translating_loading.gif'),
+			]),
 			Font.loadAsync({
 				...Icon.MaterialIcons.font,
 				'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
