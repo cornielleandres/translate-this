@@ -14,6 +14,7 @@ import {
 import {
 	CameraComp,
 	LanguagePicker,
+	Loading,
 	MonoText,
 	Translate,
 }							from '../components/index.js';
@@ -24,6 +25,7 @@ export default class HomeScreen extends Component {
 		hasCameraPermission: null,
 		image: null,
 		language: 'es',
+		loadingText: '',
 		showTranslate: false,
 	};
 
@@ -32,7 +34,14 @@ export default class HomeScreen extends Component {
 	cameraDirectory = FileSystem.cacheDirectory + 'Camera';
 
 	render() {
-		const { concepts, hasCameraPermission, image, language, showTranslate } = this.state;
+		const {
+			concepts,
+			hasCameraPermission,
+			image,
+			language,
+			loadingText,
+			showTranslate,
+		} = this.state;
 		if (hasCameraPermission === null) {
 			return(
 				<View style = { styles.homeScreenContainer }>
@@ -56,7 +65,11 @@ export default class HomeScreen extends Component {
 						/>
 					</View>
 
-					<CameraComp setCameraRef = { this._setCameraRef } snap = { this._snapPic } />
+					<CameraComp
+						setCameraRef = { this._setCameraRef }
+						showTranslate = { showTranslate }
+						snap = { this._snapPic }
+					/>
 
 					{
 						showTranslate &&
@@ -64,12 +77,16 @@ export default class HomeScreen extends Component {
 							bgImage = { this.cameraDirectory + '/' + image }
 							concepts = { concepts }
 							language = { language }
+							loadingText = { loadingText }
+							setLoadingText = { this._setLoadingText }
 							toggleTranslate = { this._toggleTranslate }
 						/>
 					}
+
+					{ loadingText !== '' && <Loading loadingText = { loadingText } /> }
 				</View>
 			);
-		};
+		}
 	};
 
 	componentDidMount = async () => {
@@ -88,19 +105,28 @@ export default class HomeScreen extends Component {
 
 	_setCameraRef = ref => this.cameraRef = ref;
 
-	_snapPic = async () => {
+	_setLoadingText = loadingText => Promise.resolve(this.setState({ loadingText }));
+
+	_snapPic = () => {
 		if (this.cameraRef) {
-			const photo = await this.cameraRef.takePictureAsync({ base64: true });
-			this.clarifaiApp.models.initModel({
-				id: Clarifai.GENERAL_MODEL, version: "aa7f35c01e0642fda5cf400f543e7c40"
-			})
-			.then(generalModel => generalModel.predict(photo.base64))
-			.then(async response => {
-				let concepts = response.outputs[0].data.concepts;
-				const images = await FileSystem.readDirectoryAsync(this.cameraDirectory);
-				concepts = concepts.map(concept => ({ name: concept.name }));
-				this.setState({ image: images[0], concepts }, () => this._toggleTranslate());
-			});
+			return this._setLoadingText('Taking picture...')
+				.then(async () => {
+					const photo = await this.cameraRef.takePictureAsync({ base64: true });
+					this.clarifaiApp.models.initModel({
+						id: Clarifai.GENERAL_MODEL, version: "aa7f35c01e0642fda5cf400f543e7c40"
+					})
+					.then(generalModel => {
+						return this._setLoadingText('Identifying picture...')
+							.then(() => generalModel.predict(photo.base64));
+					})
+					.then(async response => {
+						let concepts = response.outputs[0].data.concepts;
+						const images = await FileSystem.readDirectoryAsync(this.cameraDirectory);
+						concepts = concepts.map(concept => ({ name: concept.name }));
+						this.setState({ image: images[0], concepts }, () => this._toggleTranslate());
+					});
+				})
+				.then(() => this._setLoadingText(''));
 		}
 	};
 
@@ -115,7 +141,11 @@ const styles = StyleSheet.create({
 	homeScreenContainer: {
 		flex: 1,
 		backgroundColor: '#fff',
-		paddingTop: 30,
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		height: '100%',
+		width: '100%',
 	},
 	header: {
 		width: '100%',
@@ -124,6 +154,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		paddingHorizontal: 10,
+		marginTop: 30,
 	},
 	headerText: {
 		fontSize: 17,

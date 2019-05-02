@@ -5,7 +5,6 @@ import {
 }							from 'react-native-dotenv';
 import {
 	ImageBackground,
-	Modal,
 	ScrollView,
 	StyleSheet,
 	Text,
@@ -27,13 +26,9 @@ export default class Translate extends Component {
 		const { bgImage, toggleTranslate } = this.props;
 		const { disableConcepts, translatedConcepts, visible } = this.state;
 		return(
-			<Modal
-				animationType = 'slide'
-				onRequestClose = { () => {} }
-				transparent = { false }
-				visible = { visible }
-			>
-				<ImageBackground source = {{ uri: bgImage }} style = { styles.imgBckgrnd }>
+			<ImageBackground source = {{ uri: bgImage }} style = { styles.imgBckgrnd }>
+				{
+					visible &&
 					<View style = { styles.translations }>
 						<View style = { styles.header }>
 							<Text style = { styles.headerText }>Translations</Text>
@@ -62,15 +57,19 @@ export default class Translate extends Component {
 							</TouchableOpacity>
 						</ScrollView>
 					</View>
-				</ImageBackground>
-			</Modal>
+				}
+			</ImageBackground>
 		);
 	};
 	componentDidMount = () => {
-		this.soundObject = new Audio.Sound();
-		this.soundObject.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
-		this._translateConcepts();
-		this._toggleModal();
+		return this.props.setLoadingText('Translating...')
+			.then(() => {
+				this.soundObject = new Audio.Sound();
+				this.soundObject.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
+				this._translateConcepts()
+					.then(() => this.props.setLoadingText(''))
+					.then(() => this._toggleModal());
+			});
 	};
 	componentWillUnmount = () => this._toggleModal();
 	_getVoiceLanguage = () => {
@@ -131,7 +130,7 @@ export default class Translate extends Component {
 				}
 			}
 		} catch (err) { console.warn(err); }
-		this.setState({ translatedConcepts });
+		return this.setState({ translatedConcepts }, () => Promise.resolve());
 	};
 };
 
@@ -168,11 +167,16 @@ const styles = StyleSheet.create({
 		color: 'white',
 	},
 	imgBckgrnd: {
+		position: 'absolute',
+		top: 0,
+		bottom: 0,
+		left: 0,
+		right: 0,
+		width: '100%',
+		height: '100%',
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		height: '100%',
-		width: '100%',
 	},
 	translations: {
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -181,7 +185,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		maxHeight: '75%',
-		width: '90%',
+		width: '95%',
 		borderRadius: 5,
 		padding: 10,
 	},

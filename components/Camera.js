@@ -17,7 +17,8 @@ export default class CameraComp extends Component {
 
 	render() {
 		const { flashMode, type, zoom } = this.state;
-		const { setCameraRef, snap } = this.props;
+		const { setCameraRef, showTranslate, snap } = this.props;
+		if (showTranslate) return <View style = { styles.camera } />;
 		return(
 			<Camera
 				style = { [ styles.camera, styles.flex ] }
@@ -121,7 +122,10 @@ styles = {
 		borderRadius: 5,
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 	},
-	camera: { flexGrow: 15 },
+	camera: {
+		flexGrow: 15,
+		width: '100%',
+	},
 	cameraView: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
