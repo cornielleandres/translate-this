@@ -13,9 +13,8 @@ import {
 
 import {
 	CameraComp,
-	LanguagePicker,
+	Header,
 	Loading,
-	MonoText,
 	Translate,
 }							from '../components/index.js';
 
@@ -57,13 +56,10 @@ export default class HomeScreen extends Component {
 		} else {
 			return(
 				<View style = { styles.homeScreenContainer }>
-					<View style = { styles.header }>
-						<MonoText style = { styles.headerText }>Translate This!</MonoText>
-						<LanguagePicker
-							language = { language }
-							handleChangeLanguage = { this._handleChangeLanguage }
-						/>
-					</View>
+					<Header
+						handleChangeLanguage = { this._handleChangeLanguage }
+						language = { language }
+					/>
 
 					<CameraComp
 						setCameraRef = { this._setCameraRef }
@@ -146,20 +142,5 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		height: '100%',
 		width: '100%',
-	},
-	header: {
-		width: '100%',
-		flex: 1,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		paddingHorizontal: 10,
-		marginTop: 30,
-	},
-	headerText: {
-		fontSize: 17,
-		color: 'black',
-		lineHeight: 24,
-		textAlign: 'center',
 	},
 });
