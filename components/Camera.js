@@ -144,7 +144,8 @@ styles = {
 	transparent: { backgroundColor: 'transparent' },
 	zoomText: {
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',
-		borderRadius: 5,
+		paddingTop: 10,
+		paddingBottom: 10,
 		fontSize: 18,
 		color: 'white',
 		textAlign: 'center',
