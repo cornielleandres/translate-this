@@ -4,6 +4,7 @@ import {
 	YANDEX_API_KEY
 }							from 'react-native-dotenv';
 import {
+	Animated,
 	ImageBackground,
 	ScrollView,
 	StyleSheet,
@@ -20,16 +21,23 @@ import CameraIcon			from './CameraIcon.js';
 import Concept				from './Concept.js';
 
 export default class Translate extends Component {
-	state = { disableConcepts: false, translatedConcepts: [], visible: false };
+	state = {
+		disableConcepts: false,
+		springAnim: new Animated.Value(50),
+		translatedConcepts: [],
+		visible: false,
+	};
 	soundObject = null;
 	render() {
 		const { bgImage, toggleTranslate } = this.props;
-		const { disableConcepts, translatedConcepts, visible } = this.state;
+		const { disableConcepts, springAnim, translatedConcepts, visible } = this.state;
 		return(
 			<ImageBackground source = {{ uri: bgImage }} style = { styles.imgBckgrnd }>
 				{
 					visible &&
-					<View style = { styles.translations }>
+					<Animated.View
+						style = {[ styles.translations, { transform: [{ translateX: springAnim }] } ]}
+					>
 						<View style = { styles.header }>
 							<Text style = { styles.headerText }>Translations</Text>
 							<TouchableOpacity style = { styles.closeBtn } onPress = { toggleTranslate }>
@@ -56,7 +64,7 @@ export default class Translate extends Component {
 								<Text style = { styles.yandex }>Translations Powered by Yandex</Text>
 							</TouchableOpacity>
 						</ScrollView>
-					</View>
+					</Animated.View>
 				}
 			</ImageBackground>
 		);
@@ -68,10 +76,18 @@ export default class Translate extends Component {
 				this.soundObject.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
 				this._translateConcepts()
 					.then(() => this.props.setLoadingText(''))
-					.then(() => this._toggleModal());
+					.then(() => {
+						Animated.spring(
+							this.state.springAnim, // The value to drive
+							{
+								friction: 2, // Controls "bounciness"/overshoot. Default 7.
+								toValue: 0, // Animate to final value of 1
+							}
+						).start(); // Start the animation
+						this._toggleModal();
+					});
 			});
 	};
-	componentWillUnmount = () => this._toggleModal();
 	_getVoiceLanguage = () => {
 		switch(this.props.language) {
 			case 'da': return 'da-dk';
@@ -130,7 +146,7 @@ export default class Translate extends Component {
 				}
 			}
 		} catch (err) { console.warn(err); }
-		return this.setState({ translatedConcepts }, () => Promise.resolve());
+		this.setState({ translatedConcepts });
 	};
 };
 

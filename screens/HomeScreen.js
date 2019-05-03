@@ -109,7 +109,8 @@ export default class HomeScreen extends Component {
 				.then(async () => {
 					const photo = await this.cameraRef.takePictureAsync({ base64: true });
 					this.clarifaiApp.models.initModel({
-						id: Clarifai.GENERAL_MODEL, version: "aa7f35c01e0642fda5cf400f543e7c40"
+						id: Clarifai.GENERAL_MODEL,
+						version: "aa7f35c01e0642fda5cf400f543e7c40",
 					})
 					.then(generalModel => {
 						return this._setLoadingText('Identifying picture...')
