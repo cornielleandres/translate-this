@@ -22,7 +22,11 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "android": {
+      "package": "host.exp.translate_this"
+    },
     "ios": {
+      "bundleIdentifier": "host.exp.translate_this",
       "supportsTablet": true
     }
   }
