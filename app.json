@@ -27,6 +27,7 @@
       "versionCode": 1
     },
     "ios": {
+      "buildNumber": "1.0.0",
       "bundleIdentifier": "host.exp.translate_this",
       "supportsTablet": true
     }
