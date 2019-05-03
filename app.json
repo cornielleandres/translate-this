@@ -23,7 +23,8 @@
       "**/*"
     ],
     "android": {
-      "package": "host.exp.translate_this"
+      "package": "host.exp.translate_this",
+      "versionCode": 1
     },
     "ios": {
       "bundleIdentifier": "host.exp.translate_this",
