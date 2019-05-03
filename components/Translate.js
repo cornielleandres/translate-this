@@ -14,6 +14,7 @@ import {
 }							from 'react-native';
 import {
 	Audio,
+	Constants,
 	WebBrowser,
 }							from 'expo';
 
@@ -32,41 +33,43 @@ export default class Translate extends Component {
 		const { bgImage, toggleTranslate } = this.props;
 		const { disableConcepts, springAnim, translatedConcepts, visible } = this.state;
 		return(
-			<ImageBackground source = {{ uri: bgImage }} style = { styles.imgBckgrnd }>
-				{
-					visible &&
-					<Animated.View
-						style = {[ styles.translations, { transform: [{ translateX: springAnim }] } ]}
-					>
-						<View style = { styles.header }>
-							<Text style = { styles.headerText }>Translations</Text>
-							<TouchableOpacity style = { styles.closeBtn } onPress = { toggleTranslate }>
-								<CameraIcon name = { 'cancel' } size = { 23 } />
-							</TouchableOpacity>
-						</View>
-
-						<ScrollView
-							style = { styles.concepts }
-							contentContainerStyle = { styles.conceptsContent }
+			<View style = {[ styles.mainView, { paddingTop: Constants.statusBarHeight } ]}>
+				<ImageBackground source = {{ uri: bgImage }} style = { styles.imgBckgrnd }>
+					{
+						visible &&
+						<Animated.View
+							style = {[ styles.translations, { transform: [{ translateX: springAnim }] } ]}
 						>
-							{
-								translatedConcepts.map((concept, i) =>
-									<Concept
-										key = { i }
-										concept = { concept }
-										disableConcepts = { disableConcepts }
-										speakWord = { this._speakWord }
-									/>
-								)
-							}
+							<View style = { styles.header }>
+								<Text style = { styles.headerText }>Translations</Text>
+								<TouchableOpacity style = { styles.closeBtn } onPress = { toggleTranslate }>
+									<CameraIcon name = { 'cancel' } size = { 23 } />
+								</TouchableOpacity>
+							</View>
 
-							<TouchableOpacity onPress = { this._handleGoToYandex }>
-								<Text style = { styles.yandex }>Translations Powered by Yandex</Text>
-							</TouchableOpacity>
-						</ScrollView>
-					</Animated.View>
-				}
-			</ImageBackground>
+							<ScrollView
+								style = { styles.concepts }
+								contentContainerStyle = { styles.conceptsContent }
+							>
+								{
+									translatedConcepts.map((concept, i) =>
+										<Concept
+											key = { i }
+											concept = { concept }
+											disableConcepts = { disableConcepts }
+											speakWord = { this._speakWord }
+										/>
+									)
+								}
+
+								<TouchableOpacity onPress = { this._handleGoToYandex }>
+									<Text style = { styles.yandex }>Translations Powered by Yandex</Text>
+								</TouchableOpacity>
+							</ScrollView>
+						</Animated.View>
+					}
+				</ImageBackground>
+			</View>
 		);
 	};
 	componentDidMount = () => {
@@ -183,6 +186,13 @@ const styles = StyleSheet.create({
 		color: 'white',
 	},
 	imgBckgrnd: {
+		width: '100%',
+		height: '100%',
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	mainView: {
 		position: 'absolute',
 		top: 0,
 		bottom: 0,
@@ -190,9 +200,6 @@ const styles = StyleSheet.create({
 		right: 0,
 		width: '100%',
 		height: '100%',
-		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center',
 	},
 	translations: {
 		backgroundColor: 'rgba(0, 0, 0, 0.5)',

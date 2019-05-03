@@ -3,13 +3,14 @@ import {
 	StyleSheet,
 	View,
 }						from 'react-native';
+import { Constants }	from 'expo';
 
 import { MonoText }		from './StyledText.js';
 import LanguagePicker	from './LanguagePicker.js';
 
 const Header = ({ handleChangeLanguage, language }) => {
 	return(
-		<View style = { styles.header }>
+		<View style = {[ styles.header, { marginTop: Constants.statusBarHeight } ]}>
 			<MonoText style = { styles.headerText }>Translate This!</MonoText>
 			<LanguagePicker
 				language = { language }
@@ -27,7 +28,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		paddingHorizontal: 10,
-		marginTop: 30,
 	},
 	headerText: {
 		fontSize: 17,
