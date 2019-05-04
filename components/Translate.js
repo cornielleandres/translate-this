@@ -18,8 +18,8 @@ import {
 	WebBrowser,
 }							from 'expo';
 
-import CameraIcon			from './CameraIcon.js';
 import Concept				from './Concept.js';
+import SubHeader			from './SubHeader.js';
 
 export default class Translate extends Component {
 	state = {
@@ -40,12 +40,11 @@ export default class Translate extends Component {
 						<Animated.View
 							style = {[ styles.translations, { transform: [{ translateX: springAnim }] } ]}
 						>
-							<View style = { styles.header }>
-								<Text style = { styles.headerText }>Translations</Text>
-								<TouchableOpacity style = { styles.closeBtn } onPress = { toggleTranslate }>
-									<CameraIcon name = { 'cancel' } size = { 23 } />
-								</TouchableOpacity>
-							</View>
+							<SubHeader
+								headerText = { 'Translations' }
+								headerCloseFunc = { toggleTranslate }
+								textColor = { 'white' }
+							/>
 
 							<ScrollView
 								style = { styles.concepts }
@@ -163,28 +162,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'flex-start',
 	},
-	closeBtn: {
-		paddingTop: 10,
-		paddingRight: 10,
-		paddingBottom: 10,
-		paddingLeft: 10,
-		borderRadius: 5,
-		backgroundColor: 'rgba(200, 0, 0, 0.5)',
-	},
-	header: {
-		width: '100%',
-		flex: 1,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		marginBottom: 10,
-	},
-	headerText: {
-		flexGrow: 3,
-		textAlign: 'center',
-		fontSize: 24,
-		color: 'white',
-	},
 	imgBckgrnd: {
 		width: '100%',
 		height: '100%',
@@ -195,9 +172,7 @@ const styles = StyleSheet.create({
 	mainView: {
 		position: 'absolute',
 		top: 0,
-		bottom: 0,
 		left: 0,
-		right: 0,
 		width: '100%',
 		height: '100%',
 	},
