@@ -29,6 +29,9 @@
     "ios": {
       "buildNumber": "1.0.0",
       "bundleIdentifier": "host.exp.translatethis",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to take pictures of whatever object for which the user wants a translation."
+      },
       "supportsTablet": true
     }
   }
