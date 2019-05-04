@@ -23,12 +23,12 @@
       "**/*"
     ],
     "android": {
-      "package": "host.exp.translate_this",
+      "package": "host.exp.translatethis",
       "versionCode": 1
     },
     "ios": {
       "buildNumber": "1.0.0",
-      "bundleIdentifier": "host.exp.translate_this",
+      "bundleIdentifier": "host.exp.translatethis",
       "supportsTablet": true
     }
   }
