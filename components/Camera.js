@@ -17,8 +17,8 @@ export default class CameraComp extends Component {
 
 	render() {
 		const { flashMode, type, zoom } = this.state;
-		const { setCameraRef, showTranslate, snap } = this.props;
-		if (showTranslate) return <View style = { styles.camera } />;
+		const { setCameraRef, showInfo, showTranslate, snap, toggleInfo } = this.props;
+		if (showInfo || showTranslate) return <View style = { styles.camera } />;
 		return(
 			<Camera
 				style = { [ styles.camera, styles.flex ] }
@@ -77,12 +77,28 @@ export default class CameraComp extends Component {
 							/>
 						</TouchableOpacity>
 					</View>
+
+					<TouchableOpacity
+						style = {[ styles.icons, styles.info ]}
+						onPress = { toggleInfo }
+					>
+						<CameraIcon
+							name = { 'info' }
+							size = { 32 }
+						/>
+					</TouchableOpacity>
 				</View>
 			</Camera>
 		);
 	};
 
 	componentWillUnmount = () => setCameraRef(null);
+
+	_toggleCameraType = () => this.setState({
+		type: this.state.type === Camera.Constants.Type.back
+		? Camera.Constants.Type.front
+		: Camera.Constants.Type.back,
+	});
 
 	_toggleFlashMode = () => {
 		let flashMode;
@@ -102,26 +118,11 @@ export default class CameraComp extends Component {
 		this.setState({ flashMode });
 	};
 
-	_toggleCameraType = () => this.setState({
-		type: this.state.type === Camera.Constants.Type.back
-		? Camera.Constants.Type.front
-		: Camera.Constants.Type.back,
-	});
-
 	_zoomIn = () => this.state.zoom !== 1 && this.setState({ zoom: this.state.zoom + 0.25 });
 	_zoomOut = () => this.state.zoom !== 0 && this.setState({ zoom: this.state.zoom - 0.25 });
 };
 
 styles = {
-	flex: { flex: 1 },
-	icons: {
-		paddingTop: 10,
-		paddingRight: 24,
-		paddingBottom: 10,
-		paddingLeft: 24,
-		borderRadius: 5,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
-	},
 	camera: {
 		flexGrow: 15,
 		width: '100%',
@@ -129,6 +130,20 @@ styles = {
 	cameraView: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
+	},
+	flex: { flex: 1 },
+	info: {
+		position: 'absolute',
+		bottom: 0,
+		left: 0,
+	},
+	icons: {
+		paddingTop: 10,
+		paddingRight: 24,
+		paddingBottom: 10,
+		paddingLeft: 24,
+		borderRadius: 5,
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
 	},
 	snap: {
 		position: 'absolute',

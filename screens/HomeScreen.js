@@ -14,6 +14,7 @@ import {
 import {
 	CameraComp,
 	Header,
+	Info,
 	Loading,
 	Translate,
 }							from '../components/index.js';
@@ -25,6 +26,7 @@ export default class HomeScreen extends Component {
 		image: null,
 		language: 'es',
 		loadingText: '',
+		showInfo: false,
 		showTranslate: false,
 	};
 
@@ -39,18 +41,21 @@ export default class HomeScreen extends Component {
 			image,
 			language,
 			loadingText,
+			showInfo,
 			showTranslate,
 		} = this.state;
 		if (hasCameraPermission === null) {
 			return(
 				<View style = { styles.homeScreenContainer }>
-					<Text>You need to give camera permissions in order to use this app.</Text>
+					<Text style = { styles.errorText }>
+						You need to give camera permissions in order to use this app.
+					</Text>
 				</View>
 			);
 		} else if (hasCameraPermission === false) {
 			return(
 				<View style = { styles.homeScreenContainer }>
-					<Text>No access to camera</Text>
+					<Text style = { styles.errorText }>No access to camera</Text>
 				</View>
 			);
 		} else {
@@ -63,9 +68,13 @@ export default class HomeScreen extends Component {
 
 					<CameraComp
 						setCameraRef = { this._setCameraRef }
+						showInfo = { showInfo }
 						showTranslate = { showTranslate }
 						snap = { this._snapPic }
+						toggleInfo = { this._toggleInfo }
 					/>
+
+					{ showInfo && <Info toggleInfo = { this._toggleInfo } /> }
 
 					{
 						showTranslate &&
@@ -127,6 +136,8 @@ export default class HomeScreen extends Component {
 		}
 	};
 
+	_toggleInfo = () => this.setState({ showInfo: !this.state.showInfo });
+
 	_toggleTranslate = () => {
 		const { showTranslate } = this.state;
 		if (showTranslate) this._deleteAllImages();
@@ -135,6 +146,7 @@ export default class HomeScreen extends Component {
 };
 
 const styles = StyleSheet.create({
+	errorText: { padding: '30%' },
 	homeScreenContainer: {
 		flex: 1,
 		backgroundColor: '#fff',
