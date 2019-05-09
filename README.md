@@ -2,6 +2,10 @@
 
 A native app where you can take a picture of something and have the object in the picture translated into the language of your choice and even have a pronunciation provided.
 
+Choose a language. Point your camera at an object and take a picture. AI is used to visually recognize what is in the image. The guesses the AI makes are then translated into your chosen language.
+
+Afterwards, you can click on the translated term and get an auditory pronunciation of the word in its native tongue.
+
 ## Tools
 *	`React Native` - Framework to build native app for use on Android and iOS devices
 *	`Expo` - Platform used to make cross-platform native apps
