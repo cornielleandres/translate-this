@@ -33,6 +33,8 @@
         "NSCameraUsageDescription": "This app uses the camera to take pictures of whatever object for which the user wants a translation."
       },
       "supportsTablet": true
-    }
+    },
+    "description": "A native app where you can take a picture of something and have the object in the picture translated into the language of your choice and even have a pronunciation provided.",
+    "githubUrl": "https://github.com/cornielleandres/translate-this"
   }
 }
