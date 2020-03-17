@@ -1,8 +1,7 @@
 import React, { Component }	from 'react';
 import {
-	VOICERSS_API_KEY,
 	YANDEX_API_KEY
-}							from 'react-native-dotenv';
+}												from 'react-native-dotenv';
 import {
 	Animated,
 	ImageBackground,
@@ -11,13 +10,12 @@ import {
 	Text,
 	TouchableOpacity,
 	View,
-}							from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
-import Constants from 'expo-constants';
-import { Audio } from 'expo-av';
-
-import Concept				from './Concept.js';
-import SubHeader			from './SubHeader.js';
+}												from 'react-native';
+import * as WebBrowser	from 'expo-web-browser';
+import * as Speech 			from 'expo-speech';
+import Constants 				from 'expo-constants';
+import Concept					from './Concept.js';
+import SubHeader				from './SubHeader.js';
 
 export default class Translate extends Component {
 	state = {
@@ -26,7 +24,6 @@ export default class Translate extends Component {
 		translatedConcepts: [],
 		visible: false,
 	};
-	soundObject = null;
 	render() {
 		const { bgImage, toggleTranslate } = this.props;
 		const { disableConcepts, springAnim, translatedConcepts, visible } = this.state;
@@ -71,9 +68,7 @@ export default class Translate extends Component {
 	};
 	componentDidMount = () => {
 		return this.props.setLoadingText('Translating...')
-			.then(() => {
-				this.soundObject = new Audio.Sound();
-				this.soundObject.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
+			.then(async () => {
 				this._translateConcepts()
 					.then(() => this.props.setLoadingText(''))
 					.then(() => {
@@ -81,49 +76,18 @@ export default class Translate extends Component {
 							this.state.springAnim, // The value to drive
 							{
 								friction: 2, // Controls "bounciness"/overshoot. Default 7.
-								toValue: 0, // Animate to final value of 1
+								toValue: 0, // Animate to final value of 0
 							}
 						).start(); // Start the animation
 						this._toggleModal();
 					});
 			});
 	};
-	_getVoiceLanguage = () => {
-		switch(this.props.language) {
-			case 'da': return 'da-dk';
-			case 'de': return 'de-de';
-			case 'es': return 'es-mx';
-			case 'fi': return 'fi-fi';
-			case 'fr': return 'fr-fr';
-			case 'it': return 'it-it';
-			case 'ja': return 'ja-jp';
-			case 'ko': return 'ko-kr';
-			case 'nl': return 'nl-nl';
-			case 'no': return 'nb-no';
-			case 'pl': return 'pl-pl';
-			case 'pt': return 'pt-pt';
-			case 'ru': return 'ru-ru';
-			case 'sv': return 'sv-se';
-			case 'zh': return 'zh-cn';
-			default: return 'en-us';
-		}
-	};
 	_handleGoToYandex = () => WebBrowser.openBrowserAsync('http://translate.yandex.com/');
-	_onPlaybackStatusUpdate = async playbackStatus => {
-		if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
-			await this.soundObject.unloadAsync();
-		}
-	};
 	_speakWord = word => {
 		this.setState({ disableConcepts: true }, async () => {
-			const language = this._getVoiceLanguage();
-			let response;
 			try {
-				response = await fetch(`https://api.voicerss.org/?key=${ VOICERSS_API_KEY }&hl=${ language }&f=16khz_16bit_mono&b64=true&src=${ word }`);
-			} catch (err) { console.warn(err); this.setState({ disableConcepts: false }); }
-			try {
-				await this.soundObject.loadAsync({ uri: response._bodyText });
-				await this.soundObject.playAsync();
+				Speech.speak(word, { language: this.props.language });
 			} catch (err) { console.warn(err); this.setState({ disableConcepts: false }); }
 			this.setState({ disableConcepts: false });
 		});
@@ -132,13 +96,11 @@ export default class Translate extends Component {
 	_translateConcepts = async () => {
 		const { concepts, language } = this.props;
 		const translatedConcepts = [];
-		let response;
-		let responseJson;
 		try {
 			for (let i = 0; i < concepts.length; i++) {
 				if (concepts[i].name !== 'no person') {
-					response = await fetch(`https://translate.yandex.net/api/v1.5/tr.json/translate?key=${ YANDEX_API_KEY }&text=${ concepts[i].name }&lang=en-${ language }`);
-					responseJson = await response.json();
+					const response = await fetch(`https://translate.yandex.net/api/v1.5/tr.json/translate?key=${ YANDEX_API_KEY }&text=${ concepts[i].name }&lang=en-${ language }`);
+					const responseJson = await response.json();
 					translatedConcepts[i] = {
 						name: concepts[i].name,
 						translation: responseJson.text[0],

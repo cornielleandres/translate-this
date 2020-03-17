@@ -11,9 +11,11 @@ Afterwards, you can click on the translated term and get an auditory pronunciati
 *	`Expo` - Platform used to make cross-platform native apps
 *	`Clarifai` - AI company that excels in visual recognition
 *	`Yandex` - Translations
-*	`VoiceRSS` -  Text-to-Speech (TTS) technology
+*	`expo-speech` -  Text-to-Speech (TTS) technology
 
 ## Download Directions
 
 1.	Download Expo on your mobile device (from Google Play Store or iOS App Store)
-2.	[Click here](https://expo.io/@cornielleandres/translate-this)
+2.	Go to [this site](https://expo.io/@cornielleandres/translate-this) on your mobile device and either
+	* click on the `Open project using Expo` button, or
+	*	scan the QR code with your Expo mobile app.
