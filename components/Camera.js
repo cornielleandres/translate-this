@@ -4,7 +4,7 @@ import {
 	TouchableOpacity,
 	View,
 }							from 'react-native';
-import { Camera }			from 'expo';
+import { Camera } from 'expo-camera';
 
 import CameraIcon			from './CameraIcon.js';
 

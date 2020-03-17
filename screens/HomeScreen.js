@@ -6,10 +6,8 @@ import {
 	Text,
 	View,
 }							from 'react-native';
-import {
-	FileSystem,
-	Permissions,
-}							from 'expo';
+import * as Permissions from 'expo-permissions';
+import * as FileSystem from 'expo-file-system';
 
 import {
 	CameraComp,
@@ -143,7 +141,7 @@ export default class HomeScreen extends Component {
 		if (showTranslate) this._deleteAllImages();
 		this.setState({ showTranslate: !showTranslate });
 	};
-};
+}
 
 const styles = StyleSheet.create({
 	errorText: { padding: '30%' },

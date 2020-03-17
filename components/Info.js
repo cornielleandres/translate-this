@@ -7,7 +7,7 @@ import {
 	TouchableOpacity,
 	View,
 }							from 'react-native';
-import { Constants }		from 'expo';
+import Constants from 'expo-constants';
 
 import PrivacyPolicy		from './PrivacyPolicy.js';
 import SubHeader			from './SubHeader.js';

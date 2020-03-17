@@ -7,10 +7,8 @@ import {
 	TouchableOpacity,
 	View,
 }							from 'react-native';
-import {
-	Constants,
-	WebBrowser,
-}							from 'expo';
+import * as WebBrowser from 'expo-web-browser';
+import Constants from 'expo-constants';
 
 import SubHeader			from './SubHeader.js';
 
@@ -217,7 +215,7 @@ export default class PrivacyPolicy extends Component {
 	};
 
 	_goTo = url => WebBrowser.openBrowserAsync(url);
-};
+}
 
 const styles = StyleSheet.create({
 	bulletList: {

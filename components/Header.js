@@ -3,7 +3,7 @@ import {
 	StyleSheet,
 	View,
 }						from 'react-native';
-import { Constants }	from 'expo';
+import Constants from 'expo-constants';
 
 import { MonoText }		from './StyledText.js';
 import LanguagePicker	from './LanguagePicker.js';

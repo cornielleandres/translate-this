@@ -5,12 +5,11 @@ import {
 	StyleSheet,
 	View,
 }							from 'react-native';
-import {
-	AppLoading,
-	Asset,
-	Font,
-	Icon,
-}							from 'expo';
+import { AppLoading } from 'expo';
+
+import * as Icon from '@expo/vector-icons';
+import * as Font from 'expo-font';
+import { Asset } from 'expo-asset';
 
 import { HomeScreen } from './screens/index.js';
 
@@ -57,7 +56,7 @@ export default class App extends Component {
 	};
 
 	_handleFinishLoading = () => this.setState({ isLoadingComplete: true });
-};
+}
 
 const styles = StyleSheet.create({
 	container: {

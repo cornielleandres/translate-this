@@ -12,11 +12,9 @@ import {
 	TouchableOpacity,
 	View,
 }							from 'react-native';
-import {
-	Audio,
-	Constants,
-	WebBrowser,
-}							from 'expo';
+import * as WebBrowser from 'expo-web-browser';
+import Constants from 'expo-constants';
+import { Audio } from 'expo-av';
 
 import Concept				from './Concept.js';
 import SubHeader			from './SubHeader.js';
@@ -150,7 +148,7 @@ export default class Translate extends Component {
 		} catch (err) { console.warn(err); }
 		this.setState({ translatedConcepts });
 	};
-};
+}
 
 const styles = StyleSheet.create({
 	concepts: {
