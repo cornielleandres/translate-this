@@ -33,7 +33,8 @@
     "set-value": "^2.0.1",
     "axios": "^0.18.1",
     "acorn": "^6.4.1",
-    "mem": "^4.0.0"
+    "mem": "^4.0.0",
+    "logkitty": "^0.7.1"
   },
   "devDependencies": {
     "babel-preset-expo": "^8.0.0",
